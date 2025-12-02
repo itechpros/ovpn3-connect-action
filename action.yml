@@ -25,11 +25,8 @@ runs:
       run: |
         sudo apt install apt-transport-https
         sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://packages.openvpn.net/packages-repo.gpg | sudo tee /etc/apt/keyrings/openvpn.asc
-        # OpenVPN repo does NOT support Ubuntu Noble (24.04)
-        # Use jammy until OpenVPN publishes noble
-        echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian jammy main" | sudo tee /etc/apt/sources.list.d/openvpn-packages.list
-        # Update with retries
-        for i in {1..5}; do sudo apt update && break; sleep 5; done
+        DISTRO=`lsb_release -c -s`; echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRO main" | sudo tee /etc/apt/sources.list.d/openvpn-packages.list
+        sudo apt update
         sudo apt install openvpn3
     - name: VPN Connect
       shell: bash
